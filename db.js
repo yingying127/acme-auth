@@ -1,4 +1,5 @@
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const Sequelize = require('sequelize');
 const { STRING } = Sequelize;
 const config = {
@@ -14,6 +15,16 @@ const User = conn.define('user', {
   username: STRING,
   password: STRING
 });
+
+//added the hook below:
+User.addHook('beforeSave', async(user) => {
+  if (user.changed('password')) {
+    // console.log(user.password)
+    const hashed = await bcrypt.hash(user.password, 3)
+    user.password = hashed
+    console.log(hashed)
+  }
+})
 
 User.byToken = async(token)=> {
   try {
@@ -38,11 +49,11 @@ User.byToken = async(token)=> {
 User.authenticate = async({ username, password })=> {
   const user = await User.findOne({
     where: {
-      username,
-      password
+      username
     }
   });
-  if(user){
+  if(user && await bcrypt.compare(password, user.password)){
+    // if the hash pw is derived from the plain pw you gave it, it will return true
     return jwt.sign({ id: user.id }, process.env.JWT); 
   }
   const error = Error('bad credentials!!');
