@@ -17,9 +17,10 @@ app.post('/api/auth', async(req, res, next)=> {
   }
 });
 
-app.get('/api/auth', async(req, res, next)=> {
+app.get('/api/purchases', async(req, res, next)=> {
   try {
-    res.send(await User.byToken(req.headers.authorization));
+    const user = await User.byToken(req.headers.authorization);
+    res.send('TODO Send the purchaes for this user', user)
   }
   catch(ex){
     next(ex);
