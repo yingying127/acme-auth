@@ -4,6 +4,15 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      form > * {
+        margin: .5rem;
+      }
+    </style>
   </head>
   <body>
     <div id='root'></div>
@@ -22,13 +31,20 @@
       onChange(ev){
         this.setState({ [ev.target.name]: ev.target.value });
       }
-      onSubmit(ev){
+      async onSubmit(ev){
         ev.preventDefault();
         const { username, password } = this.state;
-        this.props.signIn({
-          username,
-          password
-        });
+        try {
+          await this.props.signIn({
+            username,
+            password
+          });
+        }
+        catch(ex) {
+          this.setState({ error: ex.response.data.error })
+          //^^ gonna say bad credentials
+          console.log(ex.response.data)
+        }
       }
       render(){
         const { onChange, onSubmit } = this;

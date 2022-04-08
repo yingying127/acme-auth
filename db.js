@@ -45,7 +45,7 @@ User.authenticate = async({ username, password })=> {
   if(user){
     return jwt.sign({ id: user.id }, process.env.JWT); 
   }
-  const error = Error('bad credentials');
+  const error = Error('bad credentials!!');
   error.status = 401;
   throw error;
 };
