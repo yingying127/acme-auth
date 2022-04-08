@@ -30,8 +30,12 @@ User.byToken = async(token)=> {
   try {
     const payload = await jwt.verify(token, process.env.JWT)
     // console.log(payload) gets the id and iat (token)
-    const user = await User.findByPk(payload.id);
+    const user = await User.findByPk(payload.id, {
     //we dont send back the user.id, we send back the token that cannot be modified. 
+      attributes: {
+        exclude: ['password']
+      }
+    });
     if(user){
       return user;
     }
